@@ -24,18 +24,12 @@
   </noscript>
 
   <style>
-    :root{
-      --bg1:#1c0033; --bg2:#3b0066; --gold:#FFD700; --txt:#fff;
-      --btn:#25D366; --btnh:#1ebe5d;
-    }
+    :root{ --bg1:#1c0033; --bg2:#3b0066; --gold:#FFD700; --txt:#fff; --btn:#25D366; --btnh:#1ebe5d; }
     *{box-sizing:border-box}
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+      margin: 0; font-family: Arial, sans-serif;
       background: linear-gradient(to bottom, var(--bg1), var(--bg2));
-      color: var(--txt);
-      text-align: center;
-      padding: 40px 20px;
+      color: var(--txt); text-align: center; padding: 40px 20px;
     }
     .container {max-width: 500px; margin: auto;}
     img.logo {width: 200px; margin-bottom: 30px;}
@@ -47,20 +41,15 @@
     }
     a.btn:hover, button.btn:hover { background-color: var(--btnh); }
     footer { margin-top: 40px; font-size: 13px; color: #ccc; }
-
-    /* Modal */
-    .modal-backdrop{
-      position:fixed; inset:0; background:rgba(0,0,0,.55);
-      display:none; align-items:center; justify-content:center; padding:16px; z-index:9999;
-    }
+    .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55);
+      display:none; align-items:center; justify-content:center; padding:16px; z-index:9999; }
     .modal{background:#121212; width:100%; max-width:480px; border-radius:16px; padding:22px; text-align:left;}
     .modal h2{margin:0 0 6px 0; font-size:20px; color:#fff;}
     .modal p{margin:0 0 16px 0; font-size:14px; color:#ddd;}
     .field{margin-bottom:12px;}
     .field label{display:block; font-size:13px; margin-bottom:6px; color:#ddd;}
-    .field input[type="text"], .field input[type="tel"]{
-      width:100%; padding:12px; border-radius:10px; border:1px solid #333; background:#1b1b1b; color:#fff;
-    }
+    .field input[type="text"], .field input[type="tel"]{ width:100%; padding:12px; border-radius:10px;
+      border:1px solid #333; background:#1b1b1b; color:#fff; }
     .consent{display:flex; align-items:flex-start; gap:10px; font-size:12px; color:#bbb; margin:8px 0 14px;}
     .row{display:flex; gap:10px; justify-content:flex-end;}
     .ghost{background:transparent; color:#fff; border:1px solid #444; border-radius:30px; padding:10px 16px; cursor:pointer;}
@@ -71,10 +60,14 @@
     // ===== CONFIG =====
     const TOKEN_CAPI = 'EAAZA5loeuqesBPJIXZBZCuwLc00ZBI3aRrMew6h1GjIVzZAuP913VSSUmwUds2EhaNP5BZApUJSUPfoeEzLYmQG5q0o1T7zmfLVmc6jE1XaiZBROw4KuRL4XUORktTzPPHmnQnsfHY9dabloNIG1eWqxL3hXLvvkUc6ebXQqnnU6YUSE6Nc3aqi0KVZA9oHDjgZDZD';
     const PIXEL_ID = '643389808779672';
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwzd7XWACp7qMQwkEIRrwu6k-rtl8dt2i31zFiG5J3_KN2kMrjX8Wa155JNbocgrPrPjA/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRt4D0XA2w_qdCacAubrGjWnQNVjfLR7pPZmwB-WODv_-1td26g5qK9ASYvtwNd9pCpQ/exec';
     const WHATSAPP_LINK = 'https://wa.me/5492235429011?text=Quiero%20activar%20mi%20cuenta';
 
     // ===== HELPERS =====
+    function getUTMParams() {
+      const p = new URLSearchParams(location.search);
+      return { source: p.get('utm_source') || '', campaign: p.get('utm_campaign') || '' };
+    }
     function getCookie(name){
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
       return match ? match[2] : null;
@@ -86,45 +79,26 @@
       if(fbclid){ return 'fb.1.' + Date.now() + '.' + fbclid; }
       return null;
     }
-
     function normalizePhoneE164(arPhone){
-      // Limpia todo lo que no sea dígito y asegura prefijo país. Ajusta según tu público.
       let digits = (arPhone || '').replace(/\D/g,'');
       if(digits.startsWith('0')) digits = digits.substring(1);
-      if(!digits.startsWith('54')) digits = '54' + digits; // Argentina por defecto
+      if(!digits.startsWith('54')) digits = '54' + digits;
       return '+' + digits;
     }
-
     async function sha256Hex(str){
       const enc = new TextEncoder().encode(str.trim().toLowerCase());
       const buf = await crypto.subtle.digest('SHA-256', enc);
       return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
     }
-
-    function saveLeadLocal(lead){
-      try{ localStorage.setItem('vb_lead', JSON.stringify(lead)); }catch(e){}
-    }
+    function saveLeadLocal(lead){ try{ localStorage.setItem('vb_lead', JSON.stringify(lead)); }catch(e){} }
     function getLeadLocal(){
-      try{
-        const raw = localStorage.getItem('vb_lead');
-        return raw ? JSON.parse(raw) : null;
-      }catch(e){ return null; }
+      try{ const raw = localStorage.getItem('vb_lead'); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
     }
-
     async function buildUserData({name, phone}){
-      const fbp = getFBP();
-      const fbc = getFBC();
-      const ua = navigator.userAgent || '';
-
+      const fbp = getFBP(); const fbc = getFBC(); const ua = navigator.userAgent || '';
       let fn = '', ln = '';
-      if(name){
-        const parts = name.trim().split(/\s+/);
-        fn = parts[0] || '';
-        ln = parts.slice(1).join(' ') || '';
-      }
+      if(name){ const parts = name.trim().split(/\s+/); fn = parts[0] || ''; ln = parts.slice(1).join(' ') || ''; }
       const e164 = normalizePhoneE164(phone || '');
-
-      // Hash según requisitos de Meta
       const user_data = {};
       if(fn) user_data.fn = await sha256Hex(fn);
       if(ln) user_data.ln = await sha256Hex(ln);
@@ -132,10 +106,8 @@
       if(fbp) user_data.fbp = fbp;
       if(fbc) user_data.fbc = fbc;
       user_data.client_user_agent = ua;
-
       return user_data;
     }
-
     async function enviarCAPI(tipoEvento, user_data = {}, event_id = ''){
       const payload = {
         data: [{
@@ -148,77 +120,52 @@
         }]
       };
       fetch(`https://graph.facebook.com/v18.0/${PIXEL_ID}/events?access_token=${TOKEN_CAPI}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
       });
     }
-
-    function registrarEnSheet(tipoEvento, extra = {}){
+    function registrarEnSheet(tipoEvento, extra = {}, fuente = ''){
       const data = Object.assign({
-        evento: tipoEvento,
-        url: window.location.href,
+        evento: tipoEvento, url: window.location.href,
         id: Math.random().toString(36).substring(2, 12),
+        utm: getUTMParams(), fuente: fuente
       }, extra);
-
       fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
     }
-
-    async function registrarEvento(tipoEvento, lead = null){
+    async function registrarEvento(tipoEvento, lead = null, fuente = ''){
       let user_data = {};
-      if(lead){
-        user_data = await buildUserData(lead);
-      }else{
-        const saved = getLeadLocal();
-        if(saved){ user_data = await buildUserData(saved); }
-      }
+      if (lead) { user_data = await buildUserData(lead); }
+      else { const saved = getLeadLocal(); if (saved) user_data = await buildUserData(saved); }
       const eventId = Math.random().toString(36).slice(2,12);
       fbq('track', tipoEvento, {}, {eventID: eventId});
       enviarCAPI(tipoEvento, user_data, eventId);
-      registrarEnSheet(tipoEvento, {lead: lead || getLeadLocal() || {}});
+      registrarEnSheet(tipoEvento, { lead: lead || getLeadLocal() || {} }, fuente);
     }
-
-    // ===== AUTO DISPAROS =====
-    setTimeout(() => { registrarEvento('Contact'); }, 20000);
+    // Auto disparos
+    setTimeout(() => { registrarEvento('Contact', null, 'time'); }, 20000);
     let scFired = false;
     window.addEventListener('scroll', () => {
       if(!scFired && (window.innerHeight + window.scrollY) >= document.body.offsetHeight){
-        scFired = true;
-        registrarEvento('Contact');
+        scFired = true; registrarEvento('Contact', null, 'scroll');
       }
     });
-
-    // ===== MODAL LEAD =====
+    // Modal
     function openLeadModal(){
-      const m = document.getElementById('lead-modal');
-      m.style.display = 'flex';
+      const m = document.getElementById('lead-modal'); m.style.display = 'flex';
       const saved = getLeadLocal();
-      if(saved){
-        document.getElementById('lead-name').value = saved.name || '';
-        document.getElementById('lead-phone').value = saved.phone || '';
-      }
+      if(saved){ document.getElementById('lead-name').value = saved.name || '';
+                 document.getElementById('lead-phone').value = saved.phone || ''; }
     }
-    function closeLeadModal(){
-      document.getElementById('lead-modal').style.display = 'none';
-    }
-
+    function closeLeadModal(){ document.getElementById('lead-modal').style.display = 'none'; }
     async function submitLeadAndGo(){
       const name = document.getElementById('lead-name').value.trim();
       const phone = document.getElementById('lead-phone').value.trim();
       const consent = document.getElementById('lead-consent').checked;
-      if(!consent){
-        alert('Por favor, aceptá el uso de tus datos para continuar.');
-        return;
-      }
-      const lead = {name, phone};
-      saveLeadLocal(lead);
-      await registrarEvento('Contact', lead);
-      // Redirige a WhatsApp
+      if(!consent){ alert('Por favor, aceptá el uso de tus datos para continuar.'); return; }
+      const lead = {name, phone}; saveLeadLocal(lead);
+      await registrarEvento('Contact', lead, 'click');
       window.location.href = WHATSAPP_LINK;
     }
   </script>
@@ -228,7 +175,6 @@
   <div class="container">
     <img src="logo.png" alt="VegasBett" class="logo" />
     <h1>Contactanos para activar tu cuenta y recibir tu bono</h1>
-
     <button class="btn" onclick="openLeadModal()">Contactar ahora</button>
 
     <div style="background-color: #f9f9f9; padding: 20px; border-radius: 12px; text-align: center; max-width: 800px; margin: auto;">
