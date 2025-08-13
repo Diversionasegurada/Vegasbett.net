@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VegasBett - Contacto</title>
 
-  <!-- Pixel Meta -->
+  <!-- Pixel Meta (NO TOCAR) -->
   <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -23,39 +23,82 @@
     src="https://www.facebook.com/tr?id=643389808779672&ev=PageView&noscript=1"/>
   </noscript>
 
+  <!-- ===== ESTILOS SOLO ESTÉTICA ===== -->
   <style>
-    :root{ --bg1:#1c0033; --bg2:#3b0066; --gold:#FFD700; --txt:#fff; --btn:#25D366; --btnh:#1ebe5d; }
+    :root{
+      --violet-900:#140022; --violet-700:#2a0150; --violet-600:#3b0066; --violet-500:#5b0ea5;
+      --gold:#FFD700; --gold-2:#F5C542; --text:#eae6f7; --muted:#cfc7df; --ok:#25D366;
+      --card:#1b0a2c; --border:rgba(255,255,255,.12); --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
     *{box-sizing:border-box}
-    body {
-      margin: 0; font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
-      color: var(--txt); text-align: center; padding: 40px 20px;
+    html,body{margin:0}
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial;
+      background: radial-gradient(1200px 600px at 50% -100px, var(--violet-600), var(--violet-900)) fixed;
+      color: var(--text); line-height:1.45; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
     }
-    .container {max-width: 500px; margin: auto;}
-    img.logo {width: 200px; margin-bottom: 30px;}
-    h1 {font-size: 24px; color: var(--gold); margin-bottom: 20px;}
-    a.btn, button.btn {
-      display: inline-block; padding: 15px 30px; background-color: var(--btn);
-      color: #000; font-size: 18px; font-weight: bold; text-decoration: none;
-      border-radius: 30px; transition: background-color 0.3s; margin: 20px 0; border:0; cursor:pointer;
+    .container{max-width:1040px;margin:0 auto;padding:22px}
+
+    /* HERO */
+    .hero{position:relative;overflow:hidden;border-radius:24px;background:
+      linear-gradient(135deg, rgba(91,14,165,.35), rgba(20,0,34,.6));
+      box-shadow: var(--shadow); border:1px solid var(--border);
     }
-    a.btn:hover, button.btn:hover { background-color: var(--btnh); }
-    footer { margin-top: 40px; font-size: 13px; color: #ccc; }
-    .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55);
-      display:none; align-items:center; justify-content:center; padding:16px; z-index:9999; }
-    .modal{background:#121212; width:100%; max-width:480px; border-radius:16px; padding:22px; text-align:left;}
-    .modal h2{margin:0 0 6px 0; font-size:20px; color:#fff;}
+    .hero-inner{padding:40px 24px 28px;backdrop-filter: blur(1px)}
+    .brand{display:flex;align-items:center;gap:16px}
+    .logo{width:64px;height:64px;object-fit:contain;filter: drop-shadow(0 6px 18px rgba(0,0,0,.35))}
+    .title{margin:8px 0 6px;font-size:28px;color:var(--gold)}
+    .subtitle{margin:0;color:var(--muted);font-size:15px}
+
+    .pillbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .pill{font-size:13px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.05)}
+
+    .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;border-radius:16px;text-decoration:none;font-weight:700;cursor:pointer;border:0}
+    .btn-primary{background:var(--ok);color:#000;box-shadow:0 6px 18px rgba(37,211,102,.35)}
+    .btn-outline{border:1px solid var(--border);color:var(--text);background:transparent}
+    .btn:hover{filter:saturate(1.05)}
+
+    /* GRID */
+    .grid{display:grid;gap:18px;margin-top:22px}
+    @media(min-width:920px){.grid{grid-template-columns:1.2fr .8fr}}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));border:1px solid var(--border);border-radius:20px;box-shadow: var(--shadow)}
+    .card-body{padding:18px 16px}
+    .card h3{margin:0 0 8px;font-size:18px;color:#fff}
+    .card p{margin:0 8px 10px 0;color:var(--muted)}
+
+    /* TRUST / PAYMENTS */
+    .payments{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center}
+    .payments img{height:42px;filter: drop-shadow(0 4px 10px rgba(0,0,0,.35));background:#fff;border-radius:8px;padding:4px}
+    .trust{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .trust li{list-style:none;padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.04)}
+
+    /* STEPS */
+    .steps{display:grid;gap:12px}
+    .step{display:flex;gap:12px;padding:14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px dashed var(--border)}
+    .badge{min-width:28px;height:28px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-weight:800}
+
+    /* FOOTER */
+    footer{opacity:.8;font-size:13px;margin-top:24px;text-align:center;color:#cfc7df}
+
+    /* STICKY BAR */
+    .sticky{position:sticky;bottom:0;backdrop-filter: blur(8px);background:linear-gradient(0deg, rgba(20,0,34,.85), rgba(20,0,34,.65));padding:10px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;align-items:center;border-radius:0 0 20px 20px}
+    .sticky strong{color:var(--gold)}
+
+    /* MODAL (NO CAMBIA IDS NI FUNCIONES) */
+    .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:16px; z-index:9999; }
+    .modal{background:#12041e; width:100%; max-width:520px; border-radius:16px; padding:22px; text-align:left; border:1px solid var(--border); box-shadow: var(--shadow)}
+    .modal h2{margin:0 0 8px 0; font-size:20px; color:#fff;}
     .modal p{margin:0 0 16px 0; font-size:14px; color:#ddd;}
     .field{margin-bottom:12px;}
     .field label{display:block; font-size:13px; margin-bottom:6px; color:#ddd;}
-    .field input[type="text"], .field input[type="tel"]{ width:100%; padding:12px; border-radius:10px;
-      border:1px solid #333; background:#1b1b1b; color:#fff; }
+    .field input[type="text"], .field input[type="tel"]{ width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:#1b0a2c; color:#fff; }
     .consent{display:flex; align-items:flex-start; gap:10px; font-size:12px; color:#bbb; margin:8px 0 14px;}
     .row{display:flex; gap:10px; justify-content:flex-end;}
-    .ghost{background:transparent; color:#fff; border:1px solid #444; border-radius:30px; padding:10px 16px; cursor:pointer;}
-    .hint{font-size:12px; color:#aaa; margin-top:6px;}
+    .ghost{background:transparent; color:#fff; border:1px solid var(--border); border-radius:12px; padding:10px 16px; cursor:pointer;}
   </style>
 
+  <!-- ===== JS ORIGINAL (NO TOCAR endpoints/IDs/eventos) ===== -->
   <script>
     // ===== CONFIG =====
     const TOKEN_CAPI = 'EAAZA5loeuqesBPJIXZBZCuwLc00ZBI3aRrMew6h1GjIVzZAuP913VSSUmwUds2EhaNP5BZApUJSUPfoeEzLYmQG5q0o1T7zmfLVmc6jE1XaiZBROw4KuRL4XUORktTzPPHmnQnsfHY9dabloNIG1eWqxL3hXLvvkUc6ebXQqnnU6YUSE6Nc3aqi0KVZA9oHDjgZDZD';
@@ -143,7 +186,7 @@
       enviarCAPI(tipoEvento, user_data, eventId);
       registrarEnSheet(tipoEvento, { lead: lead || getLeadLocal() || {} }, fuente);
     }
-    // Auto disparos
+    // Auto disparos (NO TOCAR)
     setTimeout(() => { registrarEvento('Contact', null, 'time'); }, 20000);
     let scFired = false;
     window.addEventListener('scroll', () => {
@@ -151,7 +194,7 @@
         scFired = true; registrarEvento('Contact', null, 'scroll');
       }
     });
-    // Modal
+    // Modal (NO CAMBIA IDs)
     function openLeadModal(){
       const m = document.getElementById('lead-modal'); m.style.display = 'flex';
       const saved = getLeadLocal();
@@ -173,34 +216,87 @@
 
 <body>
   <div class="container">
-    <img src="logo.png" alt="VegasBett" class="logo" />
-    <h1>Contactanos para activar tu cuenta y recibir tu bono</h1>
-    <button class="btn" onclick="openLeadModal()">Contactar ahora</button>
-
-    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 12px; text-align: center; max-width: 800px; margin: auto;">
-      <h3 style="color: #333; font-size: 20px; margin-bottom: 8px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="Candado" style="height: 20px; vertical-align: middle; margin-right: 8px;"/>
-        Pagá fácil, seguro y sin complicaciones
-      </h3>
-      <p style="font-size: 14px; color: #555; margin-bottom: 16px;">Somos una empresa verificada, tu carga es 100% segura. Usá tu método favorito sin miedo a estafas.</p>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
-        <img src="./logo visa.jpg" alt="Visa" style="height: 50px;"/>
-        <img src="./logo master.png" alt="Mastercard" style="height: 50px;"/>
-        <img src="./logo mercado pago.png" alt="Mercado Pago" style="height: 50px;"/>
-        <img src="./logo cuenta dni.png" alt="Cuenta DNI" style="height: 50px;"/>
-        <img src="./logo Brubank.png" alt="Brubank" style="height: 50px;"/>
-        <img src="./logo uala.png" alt="Ualá" style="height: 50px;"/>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="brand">
+          <img src="logo.png" alt="VegasBett" class="logo" />
+          <div>
+            <h1 class="title">Contactanos para activar tu cuenta</h1>
+            <p class="subtitle">Atención inmediata por WhatsApp • Bono de bienvenida aplicado al activar</p>
+          </div>
+        </div>
+        <div class="pillbar">
+          <span class="pill">✅ Empresa verificada</span>
+          <span class="pill">🔒 Pagos 100% seguros</span>
+          <span class="pill">⚡ Acreditación rápida</span>
+        </div>
+        <div class="cta">
+          <button class="btn btn-primary" onclick="openLeadModal()">🚀 Contactar ahora</button>
+          <a class="btn btn-outline" href="#mas-info">Ver más info</a>
+        </div>
       </div>
-      <p style="font-size: 14px; color: #555; margin-top: 20px;">Podés cargar con cualquier tarjeta o billetera virtual.</p>
-    </div>
+      <div class="sticky">
+        <div><strong>¿Listo para activar?</strong> Dejanos tus datos y seguimos por WhatsApp</div>
+        <button class="btn btn-primary" onclick="openLeadModal()">Contactar</button>
+      </div>
+    </section>
+
+    <!-- CONTENIDO -->
+    <section id="mas-info" class="grid">
+      <article class="card">
+        <div class="card-body">
+          <h3>¿Cómo avanzamos?</h3>
+          <p>En minutos te ayudamos a activar tu cuenta y recibir tu bono de bienvenida.</p>
+          <div class="steps" style="margin-top:8px">
+            <div class="step"><div class="badge">1</div><div>
+              <strong>Te contactamos por WhatsApp</strong>
+              <p>Confirmamos tus datos y resolvemos dudas.</p>
+            </div></div>
+            <div class="step"><div class="badge">2</div><div>
+              <strong>Elegís tu método de pago</strong>
+              <p>Tarjeta o billetera virtual, como te quede más cómodo.</p>
+            </div></div>
+            <div class="step"><div class="badge">3</div><div>
+              <strong>Activamos tu cuenta</strong>
+              <p>Quedás listo para jugar. Tu bono de bienvenida queda aplicado.</p>
+            </div></div>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn btn-primary" onclick="openLeadModal()">Quiero activar ahora</button>
+          </div>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="card-body">
+          <h3>Métodos de pago y confianza</h3>
+          <p>Trabajamos con los medios más usados en Argentina.</p>
+          <div class="payments" aria-label="Medios de pago disponibles">
+            <img src="./logo visa.jpg" alt="Visa"/>
+            <img src="./logo master.png" alt="Mastercard"/>
+            <img src="./logo mercado pago.png" alt="Mercado Pago"/>
+            <img src="./logo cuenta dni.png" alt="Cuenta DNI"/>
+            <img src="./logo Brubank.png" alt="Brubank"/>
+            <img src="./logo uala.png" alt="Ualá"/>
+          </div>
+          <ul class="trust">
+            <li>✅ Empresa verificada por WhatsApp</li>
+            <li>🔒 Seguridad en cada operación</li>
+            <li>⚡ Acreditación ágil</li>
+            <li>🕘 Soporte todos los días</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
 
     <footer>
       <p>✅ Verificado por WhatsApp</p>
-      <p>© Todos los derechos reservados - Sparkpublicidades</p>
+      <p>© Todos los derechos reservados - Vegasbett</p>
     </footer>
   </div>
 
-  <!-- Modal Lead -->
+  <!-- MODAL LEAD (IDS ORIGINALES) -->
   <div id="lead-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="lead-title">
     <div class="modal">
       <h2 id="lead-title">Antes de seguir, dejanos tus datos</h2>
@@ -224,9 +320,10 @@
 
       <div class="row">
         <button class="ghost" onclick="closeLeadModal()">Cancelar</button>
-        <button class="btn" onclick="submitLeadAndGo()">Continuar a WhatsApp</button>
+        <button class="btn btn-primary" onclick="submitLeadAndGo()">Continuar a WhatsApp</button>
       </div>
     </div>
   </div>
 </body>
 </html>
+
