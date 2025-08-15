@@ -84,21 +84,9 @@
     /* STICKY BAR */
     .sticky{position:sticky;bottom:0;backdrop-filter: blur(8px);background:linear-gradient(0deg, rgba(20,0,34,.85), rgba(20,0,34,.65));padding:10px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;align-items:center;border-radius:0 0 20px 20px}
     .sticky strong{color:var(--gold)}
-
-    /* MODAL (NO CAMBIA IDS NI FUNCIONES) */
-    .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:16px; z-index:9999; }
-    .modal{background:#12041e; width:100%; max-width:520px; border-radius:16px; padding:22px; text-align:left; border:1px solid var(--border); box-shadow: var(--shadow)}
-    .modal h2{margin:0 0 8px 0; font-size:20px; color:#fff;}
-    .modal p{margin:0 0 16px 0; font-size:14px; color:#ddd;}
-    .field{margin-bottom:12px;}
-    .field label{display:block; font-size:13px; margin-bottom:6px; color:#ddd;}
-    .field input[type="text"], .field input[type="tel"]{ width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:#1b0a2c; color:#fff; }
-    .consent{display:flex; align-items:flex-start; gap:10px; font-size:12px; color:#bbb; margin:8px 0 14px;}
-    .row{display:flex; gap:10px; justify-content:flex-end;}
-    .ghost{background:transparent; color:#fff; border:1px solid var(--border); border-radius:12px; padding:10px 16px; cursor:pointer;}
   </style>
 
-  <!-- ===== JS ORIGINAL (NO TOCAR endpoints/IDs/eventos) ===== -->
+  <!-- ===== JS (endpoints/IDs/eventos intactos) ===== -->
   <script>
     // ===== CONFIG =====
     const TOKEN_CAPI = 'EAAZA5loeuqesBPJIXZBZCuwLc00ZBI3aRrMew6h1GjIVzZAuP913VSSUmwUds2EhaNP5BZApUJSUPfoeEzLYmQG5q0o1T7zmfLVmc6jE1XaiZBROw4KuRL4XUORktTzPPHmnQnsfHY9dabloNIG1eWqxL3hXLvvkUc6ebXQqnnU6YUSE6Nc3aqi0KVZA9oHDjgZDZD';
@@ -122,36 +110,14 @@
       if(fbclid){ return 'fb.1.' + Date.now() + '.' + fbclid; }
       return null;
     }
-    function normalizePhoneE164(arPhone){
-      let digits = (arPhone || '').replace(/\D/g,'');
-      if(digits.startsWith('0')) digits = digits.substring(1);
-      if(!digits.startsWith('54')) digits = '54' + digits;
-      return '+' + digits;
-    }
-    async function sha256Hex(str){
-      const enc = new TextEncoder().encode(str.trim().toLowerCase());
-      const buf = await crypto.subtle.digest('SHA-256', enc);
-      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
-    function saveLeadLocal(lead){ try{ localStorage.setItem('vb_lead', JSON.stringify(lead)); }catch(e){} }
-    function getLeadLocal(){
-      try{ const raw = localStorage.getItem('vb_lead'); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
-    }
-    async function buildUserData({name, phone}){
-      const fbp = getFBP(); const fbc = getFBC(); const ua = navigator.userAgent || '';
-      let fn = '', ln = '';
-      if(name){ const parts = name.trim().split(/\s+/); fn = parts[0] || ''; ln = parts.slice(1).join(' ') || ''; }
-      const e164 = normalizePhoneE164(phone || '');
-      const user_data = {};
-      if(fn) user_data.fn = await sha256Hex(fn);
-      if(ln) user_data.ln = await sha256Hex(ln);
-      if(e164) user_data.ph = await sha256Hex(e164);
-      if(fbp) user_data.fbp = fbp;
-      if(fbc) user_data.fbc = fbc;
-      user_data.client_user_agent = ua;
-      return user_data;
-    }
-    async function enviarCAPI(tipoEvento, user_data = {}, event_id = ''){
+
+    // Enviamos solo datos técnicos (sin nombre/teléfono)
+    async function enviarCAPI(tipoEvento, event_id = ''){
+      const user_data = {
+        fbp: getFBP() || undefined,
+        fbc: getFBC() || undefined,
+        client_user_agent: navigator.userAgent || ''
+      };
       const payload = {
         data: [{
           event_name: tipoEvento,
@@ -166,6 +132,7 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
       });
     }
+
     function registrarEnSheet(tipoEvento, extra = {}, fuente = ''){
       const data = Object.assign({
         evento: tipoEvento, url: window.location.href,
@@ -177,38 +144,26 @@
         body: JSON.stringify(data)
       });
     }
-    async function registrarEvento(tipoEvento, lead = null, fuente = ''){
-      let user_data = {};
-      if (lead) { user_data = await buildUserData(lead); }
-      else { const saved = getLeadLocal(); if (saved) user_data = await buildUserData(saved); }
+
+    async function registrarEvento(tipoEvento, fuente = ''){
       const eventId = Math.random().toString(36).slice(2,12);
-      fbq('track', tipoEvento, {}, {eventID: eventId});
-      enviarCAPI(tipoEvento, user_data, eventId);
-      registrarEnSheet(tipoEvento, { lead: lead || getLeadLocal() || {} }, fuente);
+      fbq('track', tipoEvento, {}, {eventID: eventId});   // Pixel
+      enviarCAPI(tipoEvento, eventId);                    // CAPI
+      registrarEnSheet(tipoEvento, {}, fuente);           // Apps Script
     }
+
     // Auto disparos (NO TOCAR)
-    setTimeout(() => { registrarEvento('Contact', null, 'time'); }, 20000);
+    setTimeout(() => { registrarEvento('Contact', 'time'); }, 20000);
     let scFired = false;
     window.addEventListener('scroll', () => {
       if(!scFired && (window.innerHeight + window.scrollY) >= document.body.offsetHeight){
-        scFired = true; registrarEvento('Contact', null, 'scroll');
+        scFired = true; registrarEvento('Contact', 'scroll');
       }
     });
-    // Modal (NO CAMBIA IDs)
-    function openLeadModal(){
-      const m = document.getElementById('lead-modal'); m.style.display = 'flex';
-      const saved = getLeadLocal();
-      if(saved){ document.getElementById('lead-name').value = saved.name || '';
-                 document.getElementById('lead-phone').value = saved.phone || ''; }
-    }
-    function closeLeadModal(){ document.getElementById('lead-modal').style.display = 'none'; }
-    async function submitLeadAndGo(){
-      const name = document.getElementById('lead-name').value.trim();
-      const phone = document.getElementById('lead-phone').value.trim();
-      const consent = document.getElementById('lead-consent').checked;
-      if(!consent){ alert('Por favor, aceptá el uso de tus datos para continuar.'); return; }
-      const lead = {name, phone}; saveLeadLocal(lead);
-      await registrarEvento('Contact', lead, 'click');
+
+    // CTA directo a WhatsApp (sin pedir datos)
+    async function goWhatsApp(){
+      await registrarEvento('Contact', 'click');
       window.location.href = WHATSAPP_LINK;
     }
   </script>
@@ -223,7 +178,7 @@
           <img src="logo.png" alt="VegasBett" class="logo" />
           <div>
             <h1 class="title">Contactanos para activar tu cuenta</h1>
-            <p class="subtitle">Atención inmediata por WhatsApp • Bono 35% de bienvenida aplicado al activar y realizar tu primera carga minima de $ 500.</p>
+            <p class="subtitle">Atención inmediata por WhatsApp • Bono 35% de bienvenida aplicado al activar y realizar tu primera carga mínima de $500.</p>
           </div>
         </div>
         <div class="pillbar">
@@ -232,13 +187,13 @@
           <span class="pill">⚡ Acreditación rápida</span>
         </div>
         <div class="cta">
-          <button class="btn btn-primary" onclick="openLeadModal()">🚀 Contactar ahora</button>
+          <button class="btn btn-primary" onclick="goWhatsApp()">🚀 Contactar ahora</button>
           <a class="btn btn-outline" href="#mas-info">Ver más info</a>
         </div>
       </div>
       <div class="sticky">
-        <div><strong>¿Listo para activar?</strong> Dejanos tus datos y seguimos por WhatsApp</div>
-        <button class="btn btn-primary" onclick="openLeadModal()">Contactar</button>
+        <div><strong>¿Listo para activar?</strong> Seguimos por WhatsApp</div>
+        <button class="btn btn-primary" onclick="goWhatsApp()">Contactar</button>
       </div>
     </section>
 
@@ -250,7 +205,7 @@
           <p>En minutos te ayudamos a activar tu cuenta y recibir tu bono de bienvenida.</p>
           <div class="steps" style="margin-top:8px">
             <div class="step"><div class="badge">1</div><div>
-              <strong>Te contactamos por WhatsApp</strong>
+              <strong>Te escribimos por WhatsApp</strong>
               <p>Confirmamos tus datos y resolvemos dudas.</p>
             </div></div>
             <div class="step"><div class="badge">2</div><div>
@@ -259,11 +214,11 @@
             </div></div>
             <div class="step"><div class="badge">3</div><div>
               <strong>Activamos tu cuenta</strong>
-              <p>Quedás listo para jugar. Tu bono de bienvenida queda aplicado automaticamente con tu primera carga minima de $ 500.</p>
+              <p>Quedás listo para jugar. El bono del 35% se aplica automáticamente con tu primera carga mínima de $500.</p>
             </div></div>
           </div>
           <div style="margin-top:12px">
-            <button class="btn btn-primary" onclick="openLeadModal()">Quiero activar ahora</button>
+            <button class="btn btn-primary" onclick="goWhatsApp()">Quiero activar ahora</button>
           </div>
         </div>
       </article>
@@ -292,37 +247,8 @@
 
     <footer>
       <p>✅ Verificado por WhatsApp</p>
-      <p>© Todos los derechos reservados - Vegasbett</p>
+      <p>© Todos los derechos reservados - VegasBett</p>
     </footer>
-  </div>
-
-  <!-- MODAL LEAD (IDS ORIGINALES) -->
-  <div id="lead-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="lead-title">
-    <div class="modal">
-      <h2 id="lead-title">Antes de seguir, dejanos tus datos</h2>
-      <p>Así aceleramos tu activación y podemos ayudarte mejor.</p>
-
-      <div class="field">
-        <label for="lead-name">Nombre y apellido</label>
-        <input id="lead-name" type="text" placeholder="Ej: Juan Pérez" />
-      </div>
-
-      <div class="field">
-        <label for="lead-phone">WhatsApp</label>
-        <input id="lead-phone" type="tel" placeholder="Ej: 11 2345 6789" />
-        <div class="hint">Usamos tu número para asistirte por WhatsApp. Se guarda de forma segura.</div>
-      </div>
-
-      <label class="consent">
-        <input id="lead-consent" type="checkbox" />
-        <span>Autorizo el uso de mis datos (nombre y WhatsApp) para contactarme y para medición publicitaria.</span>
-      </label>
-
-      <div class="row">
-        <button class="ghost" onclick="closeLeadModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="submitLeadAndGo()">Continuar a WhatsApp</button>
-      </div>
-    </div>
   </div>
 </body>
 </html>
