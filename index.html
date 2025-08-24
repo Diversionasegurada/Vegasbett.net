@@ -84,6 +84,27 @@
     /* STICKY BAR */
     .sticky{position:sticky;bottom:0;backdrop-filter: blur(8px);background:linear-gradient(0deg, rgba(20,0,34,.85), rgba(20,0,34,.65));padding:10px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;align-items:center;border-radius:0 0 20px 20px}
     .sticky strong{color:var(--gold)}
+
+    /* —— NUEVO: Partner chip y ribbon del bono —— */
+    .partnerbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;border:1px solid var(--border);
+      background:rgba(255,255,255,.06);font-size:12.5px;color:var(--muted)
+    }
+    .chip a{color:var(--gold);text-decoration:none;font-weight:700}
+    .chip a:hover{text-decoration:underline}
+
+    .ribbon{
+      position:absolute; top:16px; right:16px;
+      background:linear-gradient(180deg,var(--gold),var(--gold-2));
+      color:#000; padding:10px 14px; border-radius:14px;
+      box-shadow:0 10px 24px rgba(0,0,0,.35); text-align:left;
+      font-weight:800; line-height:1.1; border:1px solid rgba(0,0,0,.2)
+    }
+    .ribbon small{display:block;font-weight:700;opacity:.9}
+    .ribbon .big{font-size:20px;letter-spacing:.3px}
+    .ribbon .mini{font-size:12px;margin-top:4px}
   </style>
 
   <!-- ===== JS (endpoints/IDs/eventos intactos) ===== -->
@@ -173,14 +194,26 @@
   <div class="container">
     <!-- HERO -->
     <section class="hero">
+      <!-- NUEVO: ribbon del bono -->
+      <div class="ribbon">
+        <span class="big">+35% BONO</span>
+        <small class="mini">con 1ra carga mínima de $500,00</small>
+      </div>
+
       <div class="hero-inner">
         <div class="brand">
           <img src="logo.png" alt="VegasBett" class="logo" />
           <div>
             <h1 class="title">Contactanos para activar tu cuenta</h1>
             <p class="subtitle">Atención inmediata por WhatsApp • Bono 35% de bienvenida aplicado al activar y realizar tu primera carga mínima de $500.</p>
+
+            <!-- NUEVO: partner chip ganamos.io -->
+            <div class="partnerbar">
+              <div class="chip">Plataforma: <a href="https://ganamos.io" target="_blank" rel="noopener">ganamos.io</a></div>
+            </div>
           </div>
         </div>
+
         <div class="pillbar">
           <span class="pill">✅ Empresa verificada</span>
           <span class="pill">🔒 Pagos 100% seguros</span>
@@ -193,6 +226,7 @@
           <a class="btn btn-outline" href="#mas-info">Ver más info</a>
         </div>
       </div>
+
       <div class="sticky">
         <div><strong>¿Listo para activar?</strong> Seguimos por WhatsApp</div>
         <button class="btn btn-primary" onclick="goWhatsApp()">Contactar</button>
@@ -207,7 +241,7 @@
           <p>En minutos te ayudamos a activar tu cuenta y recibir tu bono de bienvenida.</p>
           <div class="steps" style="margin-top:8px">
             <div class="step"><div class="badge">1</div><div>
-              <strong>Nos escribis por WhatsApp</strong>
+              <strong>Nos escribís por WhatsApp</strong>
               <p>Confirmamos tus datos y te creamos un usuario en segundos.</p>
             </div></div>
             <div class="step"><div class="badge">2</div><div>
@@ -254,4 +288,5 @@
   </div>
 </body>
 </html>
+
 
